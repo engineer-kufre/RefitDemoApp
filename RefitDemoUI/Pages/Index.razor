@@ -3,12 +3,19 @@
 
 @if(guests is not null)
 {
-    <ul>
-        @foreach(var guest in guests)
-        {
-            <li>@guest.FirstName @guest.LastName</li>
-        }
-    </ul>
+    @foreach(var guest in guests)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <h2>@guest.Id @guest.FirstName @guest.LastName</h2>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-primary" @onclick="@(() => this.AddGuest(guest))">Add Guest</button>
+                <button class="btn btn-warning" @onclick="@(() => this.UpdateGuest(guest))">Update Guest</button>
+                <button class="btn btn-danger" @onclick="@(() => this.DeleteGuest(guest.Id))">Delete Guest</button>
+            </div>
+        </div>
+    }
 }
 
 @code{
@@ -16,6 +23,41 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await this.GetGuestsAsync();
+    }
+
+    private async Task GetGuestsAsync()
+    {
         guests = await GuestData.GetGuests();
+    }
+
+    private async Task AddGuest(GuestDto guest)
+    {
+        var guestToAdd = new GuestDto
+        {
+            Id = guests.Count + 1,
+            FirstName = guest.FirstName,
+            LastName = guest.LastName
+        };
+
+        await GuestData.CreateGuest(guestToAdd);
+
+        await this.GetGuestsAsync();
+    }
+
+    private async Task UpdateGuest(GuestDto guest)
+    {
+        guest.LastName = "Updated";
+
+        await GuestData.UpdateGuest(guest.Id, guest);
+
+        await this.GetGuestsAsync();
+    }
+
+    private async Task DeleteGuest(int guestId)
+    {
+        await GuestData.DeleteGuest(guestId);
+
+        await this.GetGuestsAsync();
     }
 }
