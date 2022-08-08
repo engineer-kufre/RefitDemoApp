@@ -14,40 +14,53 @@ namespace RefitDemoAPI.Controllers
         private static List<Guest> guests = new List<Guest>()
         {
             new Guest { Id = 1, FirstName = "Darth", LastName = "Vader" },
-            new Guest { Id = 1, FirstName = "Luke", LastName = "Skywalker" },
-            new Guest { Id = 1, FirstName = "Hans", LastName = "Solo" }
+            new Guest { Id = 2, FirstName = "Luke", LastName = "Skywalker" },
+            new Guest { Id = 3, FirstName = "Hans", LastName = "Solo" }
         };
 
         // GET: api/<GuestsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Guest> Get()
         {
-            return new string[] { "value1", "value2" };
+            return guests;
         }
 
         // GET api/<GuestsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Guest Get(int id)
         {
-            return "value";
+            return guests.FirstOrDefault(g => g.Id == id);
         }
 
         // POST api/<GuestsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Guest guest)
         {
+            guests.Add(guest);
         }
 
         // PUT api/<GuestsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Guest guest)
         {
+            var guestToRemove = guests.FirstOrDefault(g => g.Id == id);
+            if(guestToRemove != null)
+            {
+                guests.Remove(guestToRemove);
+
+                guests.Add(guest);
+            }
         }
 
         // DELETE api/<GuestsController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            var guestToRemove = guests.FirstOrDefault(g => g.Id == id);
+            if (guestToRemove != null)
+            {
+                guests.Remove(guestToRemove);
+            }
         }
     }
 }
