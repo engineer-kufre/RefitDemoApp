@@ -28,6 +28,14 @@ namespace RefitDemoAPI
         {
 
             services.AddControllers();
+            services.AddCors(policy =>
+            {
+                policy.AddPolicy("OpenCorsPolicy", opt =>
+                    opt.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                );
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RefitDemoAPI", Version = "v1" });
@@ -45,6 +53,8 @@ namespace RefitDemoAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("OpenCorsPolicy");
 
             app.UseRouting();
 
